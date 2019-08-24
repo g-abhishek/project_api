@@ -4,22 +4,13 @@ var Express = require('express');
 import { Express } from 'express';
 
 
-export default class Route {
-
-    hello(app: any) {
-        app.get('/', function (req: any, res: any) {
-            return res.send('hello abhishek')
-        })
-        app.get('/anil', function (req: any, res: any) {
-            return res.send('hello Anil')
-        })
-    }
+export default class UserRoute {
 
     signUp(app: Express){
         app.post('/signup', userController.signUp);
     }
 
-    Route(app: Express){
+    userRoute(app: Express){
         this.signUp(app)
     }
 
