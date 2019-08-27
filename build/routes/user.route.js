@@ -8,8 +8,16 @@ var UserRoute = /** @class */ (function () {
     UserRoute.prototype.signUp = function (app) {
         app.post('/signup', user_controller_1.userController.signUp);
     };
+    UserRoute.prototype.registerUser = function (app) {
+        app.post('/registeruser', user_controller_1.userController.registerUser);
+    };
+    UserRoute.prototype.getSignedUser = function (app) {
+        app.post('/getsigneduser', user_controller_1.userController.getSignedUser);
+    };
     UserRoute.prototype.userRoute = function (app) {
         this.signUp(app);
+        this.registerUser(app);
+        this.getSignedUser(app);
     };
     return UserRoute;
 }());

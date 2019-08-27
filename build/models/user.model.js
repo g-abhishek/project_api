@@ -7,10 +7,6 @@ var signUpSchema = new mongoose.Schema({
     password: {
         type: String
     },
-    isRegistrationVarified: {
-        type: Boolean,
-        default: false
-    },
     fullname: {
         type: String
     },
@@ -21,7 +17,12 @@ var signUpSchema = new mongoose.Schema({
         type: String
     },
     gender: {
-        type: Number
+        type: Number,
+        default: 1
+    },
+    isRegistrationVarified: {
+        type: Boolean,
+        default: false
     }
 });
 var Signup = mongoose.model('Signup', signUpSchema);
