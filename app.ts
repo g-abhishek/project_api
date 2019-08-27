@@ -2,6 +2,7 @@ import express from 'express';
 import UserRoute from './routes/user.route';
 
 var bodyParser = require('body-parser');
+var multer = require('multer');
 // var session = require('express-session');
 // var MongoStore = require('connect-mongo')(session);
 const mongoose = require('mongoose');
@@ -21,6 +22,32 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 var userRouting = new UserRoute();
 userRouting.userRoute(app);
+
+
+let storage = multer.diskStorage({
+    destination: (req:any , file:any, cb:any) => {
+      cb(null, 'D:/')
+    },
+    filename: (req:any , file:any, cb:any) => {
+      cb(null,Date.now()+ '-' + file.originalname )
+    }
+});
+var upload = multer({storage: storage});
+
+app.post('/', upload.single('image'), (req:any, res:any) => {
+        if (!req.file) {
+            return res.send({
+                message: "Please Select an Image",
+                responseCode: 200
+            });
+        }else {
+            return res.send({
+                message: "uploaded an Image",
+                responseCode: 200
+            });
+        }
+});
+
 
 app.listen(port, () => {
     console.log('Server is up and running on port numner ' + port);

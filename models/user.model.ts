@@ -2,12 +2,26 @@ var mongoose = require('mongoose');
 
 let signUpSchema = new mongoose.Schema({
     mobile: {
-        type: Number,
-        required: true,
+        type: Number
     },
     password: {
-        type: String,
-        required: true
+        type: String
+    },
+    isRegistrationVarified: {
+        type: Boolean,
+        default: false
+    },
+    fullname: {
+        type: String
+    },
+    department: {
+        type: String
+    },
+    college: {
+        type: String
+    },
+    gender: {
+        type: Number
     }
 })
 
