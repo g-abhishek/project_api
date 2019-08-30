@@ -15,11 +15,15 @@ export default class UserRoute {
     getSignedUser(app: Express){
         app.post('/getsigneduser', userController.getSignedUser);
     }
+    user(app: Express){
+        app.get('/user', userController.user);
+    }
 
     userRoute(app: Express){
         this.signUp(app)
         this.registerUser(app)
         this.getSignedUser(app);
+        this.user(app);
     }
 
 }

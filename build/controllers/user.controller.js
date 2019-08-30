@@ -2,6 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var User = require('../models/user.model');
 var jwt = require('jsonwebtoken');
+var no_user_found = 500;
+var db_err = 400;
+var not_valid_token = 900;
 var UserController = /** @class */ (function () {
     function UserController() {
         this.signUp = function (req, res, next) {
@@ -24,7 +27,7 @@ var UserController = /** @class */ (function () {
                         return res.send({
                             message: 'user created',
                             token: token,
-                            responseCode: 700,
+                            responseCode: 200,
                             status: 200,
                             user: user
                         });
@@ -34,7 +37,7 @@ var UserController = /** @class */ (function () {
             else {
                 return res.send({
                     message: 'all fields are required',
-                    responseCode: 300,
+                    responseCode: 100,
                     status: 200
                 });
             }
@@ -55,22 +58,79 @@ var UserController = /** @class */ (function () {
                         });
                     }
                     else {
-                        var token = jwt.sign(JSON.stringify(user), 'my_secret_key');
-                        return res.send({
-                            message: 'user data',
-                            token: token,
-                            responseCode: 700,
-                            status: 200,
-                            user: user
-                        });
+                        if (!user) {
+                            return res.send({
+                                message: 'no user found',
+                                responseCode: 500,
+                                status: 200
+                            });
+                        }
+                        else if (user.isRegistrationVarified === false) {
+                            var token = jwt.sign(JSON.stringify(user), 'my_secret_key');
+                            return res.send({
+                                message: 'not regitered user',
+                                token: token,
+                                responseCode: 300,
+                                status: 200,
+                                result: false
+                            });
+                        }
+                        else {
+                            var token = jwt.sign(JSON.stringify(user), 'my_secret_key');
+                            return res.send({
+                                message: 'registered user',
+                                token: token,
+                                responseCode: 200,
+                                status: 200,
+                                result: user
+                            });
+                        }
                     }
                 });
             }
             else {
                 return res.send({
                     message: 'all fields are required',
-                    responseCode: 300,
+                    responseCode: 100,
                     status: 200
+                });
+            }
+        };
+        this.user = function (req, res, next) {
+            var isRegistrationVarified = false;
+            var token = req.headers.token;
+            if (token) {
+                jwt.verify(token, 'my_secret_key', function (err, user) {
+                    if (err) {
+                        return res.send({
+                            message: 'not valid token',
+                            responseCode: 900,
+                            status: 200,
+                            error: err
+                        });
+                    }
+                    else {
+                        if (user.isRegistrationVarified == false) {
+                            return res.send({
+                                message: "Not Verified",
+                                responseCode: 300,
+                                status: 200
+                            });
+                        }
+                        else {
+                            return res.send({
+                                message: "Verified",
+                                responseCode: 200,
+                                status: 200
+                            });
+                        }
+                    }
+                });
+            }
+            else {
+                return res.send({
+                    message: "token is required",
+                    responseCode: 100
                 });
             }
         };
@@ -110,15 +170,26 @@ var UserController = /** @class */ (function () {
                                     User.findById({ '_id': req.user._id }, function (err, user) {
                                         if (err) {
                                             return res.send({
-                                                message: 'no user found',
+                                                message: 'error',
                                                 responseCode: 700,
                                                 status: 200,
                                                 error: err
                                             });
                                         }
-                                        else {
+                                        else if (!user) {
                                             return res.send({
-                                                message: 'decodes token',
+                                                message: 'no user found',
+                                                responseCode: 500,
+                                                status: 200,
+                                                error: err
+                                            });
+                                        }
+                                        else {
+                                            var token = jwt.sign(JSON.stringify(user), 'my_secret_key');
+                                            return res.send({
+                                                message: 'Registration Successfull',
+                                                token: token,
+                                                responseCode: 200,
                                                 status: 200,
                                                 result: user
                                             });
