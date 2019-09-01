@@ -14,10 +14,14 @@ var UserRoute = /** @class */ (function () {
     UserRoute.prototype.getSignedUser = function (app) {
         app.post('/getsigneduser', user_controller_1.userController.getSignedUser);
     };
+    UserRoute.prototype.user = function (app) {
+        app.get('/user', user_controller_1.userController.user);
+    };
     UserRoute.prototype.userRoute = function (app) {
         this.signUp(app);
         this.registerUser(app);
         this.getSignedUser(app);
+        this.user(app);
     };
     return UserRoute;
 }());

@@ -2,7 +2,8 @@
 var mongoose = require('mongoose');
 var signUpSchema = new mongoose.Schema({
     mobile: {
-        type: Number
+        type: Number,
+        index: { unique: true }
     },
     password: {
         type: String
