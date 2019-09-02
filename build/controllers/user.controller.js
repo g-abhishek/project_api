@@ -176,14 +176,6 @@ var UserController = /** @class */ (function () {
                                                 error: err
                                             });
                                         }
-                                        else if (!user) {
-                                            return res.send({
-                                                message: 'no user found',
-                                                responseCode: 500,
-                                                status: 200,
-                                                error: err
-                                            });
-                                        }
                                         else {
                                             var token = jwt.sign(JSON.stringify(user), 'my_secret_key');
                                             return res.send({
@@ -206,6 +198,13 @@ var UserController = /** @class */ (function () {
                             });
                         }
                     }
+                });
+            }
+            else {
+                return res.send({
+                    message: 'token required',
+                    responseCode: 900,
+                    status: 200
                 });
             }
         };

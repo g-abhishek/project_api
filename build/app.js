@@ -44,8 +44,8 @@ app.post('/', upload.single('image'), function (req, res) {
         });
     }
 });
-// app.listen(port, () => {
-//     console.log('Server is up and running on port numner ' + port);
-// });
-app.listen(3002, '192.168.1.106');
+app.listen(port, function () {
+    console.log('Server is up and running on port numner ' + port);
+});
+// app.listen(3002, '192.168.1.106');
 //# sourceMappingURL=app.js.map
