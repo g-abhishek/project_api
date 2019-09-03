@@ -119,9 +119,10 @@ var UserController = /** @class */ (function () {
                         }
                         else {
                             return res.send({
-                                message: "Verified",
+                                message: "Verified User",
                                 responseCode: 200,
-                                status: 200
+                                status: 200,
+                                user: user
                             });
                         }
                     }
@@ -194,6 +195,77 @@ var UserController = /** @class */ (function () {
                             return res.send({
                                 message: 'all fields are required',
                                 responseCode: 300,
+                                status: 200
+                            });
+                        }
+                    }
+                });
+            }
+            else {
+                return res.send({
+                    message: 'token required',
+                    responseCode: 900,
+                    status: 200
+                });
+            }
+        };
+        this.editUser = function (req, res) {
+            var token = req.headers.token;
+            if (token) {
+                jwt.verify(token, 'my_secret_key', function (err, user) {
+                    if (err) {
+                        return res.send({
+                            message: 'not valid token',
+                            responseCode: 900,
+                            status: 200,
+                            error: err
+                        });
+                    }
+                    else {
+                        if (req.body.fullname && req.body.department && req.body.college && req.body.gender) {
+                            var userData = {
+                                fullname: req.body.fullname,
+                                department: req.body.department,
+                                college: req.body.college,
+                                gender: req.body.gender
+                            };
+                            User.updateOne({ _id: user._id }, userData, function (err, result) {
+                                if (err) {
+                                    return res.send({
+                                        message: 'db err',
+                                        responseCode: 700,
+                                        status: 200,
+                                        error: err
+                                    });
+                                }
+                                else {
+                                    User.findById({ _id: user._id }, function (err, user) {
+                                        var token = jwt.sign(JSON.stringify(user), 'my_secret_key');
+                                        if (err) {
+                                            return res.send({
+                                                message: 'db err',
+                                                responseCode: 700,
+                                                status: 200,
+                                                error: err
+                                            });
+                                        }
+                                        else {
+                                            return res.send({
+                                                message: 'user updated',
+                                                responseCode: 200,
+                                                status: 200,
+                                                token: token,
+                                                result: user
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                        else {
+                            return res.send({
+                                message: 'all fields are required',
+                                responseCode: 100,
                                 status: 200
                             });
                         }

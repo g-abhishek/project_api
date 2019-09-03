@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var user_route_1 = __importDefault(require("./routes/user.route"));
+var post_route_1 = __importDefault(require("./routes/post.route"));
 var bodyParser = require('body-parser');
 var multer = require('multer');
 // var session = require('express-session');
@@ -21,6 +22,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 var userRouting = new user_route_1.default();
 userRouting.userRoute(app);
+var postRoute = new post_route_1.default();
+postRoute.postRoute(app);
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'D:/');
@@ -44,8 +47,10 @@ app.post('/', upload.single('image'), function (req, res) {
         });
     }
 });
-app.listen(port, function () {
-    console.log('Server is up and running on port numner ' + port);
+// app.listen(port, () => {
+//     console.log('Server is up and running on port numner ' + port);
+// });
+app.listen(3002, '192.168.1.106', function () {
+    console.log('Server is up and running on port numner ' + 3002);
 });
-// app.listen(3002, '192.168.1.106');
 //# sourceMappingURL=app.js.map

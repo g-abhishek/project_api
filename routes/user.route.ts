@@ -1,6 +1,5 @@
 import { userController } from '../controllers/user.controller';
 
-var Express = require('express');
 import { Express } from 'express';
 
 
@@ -19,11 +18,16 @@ export default class UserRoute {
         app.get('/user', userController.user);
     }
 
+    editUser(app: Express){
+        app.post('/edituser', userController.editUser);
+    }
+
     userRoute(app: Express){
         this.signUp(app)
         this.registerUser(app)
         this.getSignedUser(app);
         this.user(app);
+        this.editUser(app);
     }
 
 }

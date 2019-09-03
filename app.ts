@@ -1,5 +1,6 @@
 import express from 'express';
 import UserRoute from './routes/user.route';
+import PostRoute from './routes/post.route';
 
 var bodyParser = require('body-parser');
 var multer = require('multer');
@@ -22,6 +23,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 var userRouting = new UserRoute();
 userRouting.userRoute(app);
+ 
+var postRoute =  new PostRoute();
+postRoute.postRoute(app);
 
 
 let storage = multer.diskStorage({
@@ -49,7 +53,9 @@ app.post('/', upload.single('image'), (req:any, res:any) => {
 });
 
 
-app.listen(port, () => {
-    console.log('Server is up and running on port numner ' + port);
+// app.listen(port, () => {
+//     console.log('Server is up and running on port numner ' + port);
+// });
+app.listen(3002, '192.168.1.106',()=>{
+    console.log('Server is up and running on port numner ' + 3002);
 });
-// app.listen(3002, '192.168.1.106');

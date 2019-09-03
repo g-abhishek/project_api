@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var user_controller_1 = require("../controllers/user.controller");
-var Express = require('express');
 var UserRoute = /** @class */ (function () {
     function UserRoute() {
     }
@@ -17,11 +16,15 @@ var UserRoute = /** @class */ (function () {
     UserRoute.prototype.user = function (app) {
         app.get('/user', user_controller_1.userController.user);
     };
+    UserRoute.prototype.editUser = function (app) {
+        app.post('/edituser', user_controller_1.userController.editUser);
+    };
     UserRoute.prototype.userRoute = function (app) {
         this.signUp(app);
         this.registerUser(app);
         this.getSignedUser(app);
         this.user(app);
+        this.editUser(app);
     };
     return UserRoute;
 }());
