@@ -1,3 +1,4 @@
+var mongoose = require('mongoose');
 var Post = require('../models/post.model');
 var User = require('../models/user.model');
 var jwt = require('jsonwebtoken');
@@ -25,7 +26,7 @@ class PostController {
                                 paymentType: req.body.paymentType,
                                 price: req.body.price
                             }
-                            Post.create(postSchema, (err: any, post: any) => {
+                            Post.create(postSchema, (err: any, result: any) => {
                                 if (err) {
                                     return res.send({
                                         message: 'db err',
@@ -33,15 +34,24 @@ class PostController {
                                         error: err
                                     })
                                 } else {
-                                    User.findById(userId,(err:any, user:any)=>{
-                                        if(err){
+                                    Post.aggregate([
+                                        {
+                                            $lookup: {
+                                                from: 'signups',
+                                                localField: 'userId',
+                                                foreignField: '_id',
+                                                as: 'user'
+                                            }
+                                        }
+                                    ], (err: any, post: any) => {
+                                        if (err) {
                                             return res.send({
-                                                message: 'db err while finding user',
+                                                message: 'db err while aggregating',
                                                 responseCode: 300,
                                                 error: err
                                             })
-                                        }else{
-                                             
+                                        } else {
+
                                             return res.send({
                                                 message: 'Post created 1',
                                                 responseCode: 200,
@@ -50,7 +60,6 @@ class PostController {
                                             });
                                         }
                                     })
-                                    
                                 }
                             })
                         } else {
@@ -75,12 +84,32 @@ class PostController {
                                         error: err
                                     })
                                 } else {
-                                    return res.send({
-                                        message: 'Post created 2',
-                                        responseCode: 200,
-                                        status: 200,
-                                        result: result
-                                    });
+                                    Post.aggregate([
+                                        {
+                                            $lookup: {
+                                                from: 'User',
+                                                localField: 'userId',
+                                                foreignField: '_id',
+                                                as: 'user'
+                                            }
+                                        }
+                                    ], (err: any, post: any) => {
+                                        if (err) {
+                                            return res.send({
+                                                message: 'db err while aggregating',
+                                                responseCode: 300,
+                                                error: err
+                                            })
+                                        } else {
+
+                                            return res.send({
+                                                message: 'Post created 2',
+                                                responseCode: 200,
+                                                status: 200,
+                                                post: post
+                                            });
+                                        }
+                                    })
                                 }
                             })
 
@@ -141,6 +170,14 @@ class PostController {
 
     viewAllPost = function (req: any, res: any) {
         Post.find({}, (err: any, post: any) => {
+            console.log(post[1].userId);
+            var n =post.length;
+            var a = parseInt(n);
+            var i =0;
+            while(a>0){
+                console.log(post[a].userId);
+                a--;
+            }
             if (err) {
                 return res.send({
                     message: 'db err',

@@ -1,8 +1,10 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var bson_1 = require("bson");
 var mongoose = require('mongoose');
 var postSchema = new mongoose.Schema({
     userId: {
-        type: String,
+        type: bson_1.ObjectId,
         required: true
     },
     nameOfProduct: {

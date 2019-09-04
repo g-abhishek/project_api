@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var mongoose = require('mongoose');
 var Post = require('../models/post.model');
 var User = require('../models/user.model');
 var jwt = require('jsonwebtoken');
@@ -27,7 +28,7 @@ var PostController = /** @class */ (function () {
                                     paymentType: req.body.paymentType,
                                     price: req.body.price
                                 };
-                                Post.create(postSchema, function (err, post) {
+                                Post.create(postSchema, function (err, result) {
                                     if (err) {
                                         return res.send({
                                             message: 'db err',
@@ -36,10 +37,19 @@ var PostController = /** @class */ (function () {
                                         });
                                     }
                                     else {
-                                        User.findById(userId, function (err, user) {
+                                        Post.aggregate([
+                                            {
+                                                $lookup: {
+                                                    from: 'signups',
+                                                    localField: 'userId',
+                                                    foreignField: '_id',
+                                                    as: 'user'
+                                                }
+                                            }
+                                        ], function (err, post) {
                                             if (err) {
                                                 return res.send({
-                                                    message: 'db err while finding user',
+                                                    message: 'db err while aggregating',
                                                     responseCode: 300,
                                                     error: err
                                                 });
@@ -80,11 +90,31 @@ var PostController = /** @class */ (function () {
                                         });
                                     }
                                     else {
-                                        return res.send({
-                                            message: 'Post created 2',
-                                            responseCode: 200,
-                                            status: 200,
-                                            result: result
+                                        Post.aggregate([
+                                            {
+                                                $lookup: {
+                                                    from: 'User',
+                                                    localField: 'userId',
+                                                    foreignField: '_id',
+                                                    as: 'user'
+                                                }
+                                            }
+                                        ], function (err, post) {
+                                            if (err) {
+                                                return res.send({
+                                                    message: 'db err while aggregating',
+                                                    responseCode: 300,
+                                                    error: err
+                                                });
+                                            }
+                                            else {
+                                                return res.send({
+                                                    message: 'Post created 2',
+                                                    responseCode: 200,
+                                                    status: 200,
+                                                    post: post
+                                                });
+                                            }
                                         });
                                     }
                                 });
@@ -147,6 +177,14 @@ var PostController = /** @class */ (function () {
         };
         this.viewAllPost = function (req, res) {
             Post.find({}, function (err, post) {
+                console.log(post[1].userId);
+                var n = post.length;
+                var a = parseInt(n);
+                var i = 0;
+                while (a > 0) {
+                    console.log(post[a].userId);
+                    a--;
+                }
                 if (err) {
                     return res.send({
                         message: 'db err',
