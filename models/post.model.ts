@@ -1,8 +1,10 @@
+import { ObjectId } from "bson";
+
 var mongoose = require('mongoose');
 
 let postSchema = new mongoose.Schema({
     userId: {
-        type: String,
+        type: ObjectId,
         required: true
     },
     nameOfProduct: {
