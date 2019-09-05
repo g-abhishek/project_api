@@ -37,31 +37,11 @@ var PostController = /** @class */ (function () {
                                         });
                                     }
                                     else {
-                                        Post.aggregate([
-                                            {
-                                                $lookup: {
-                                                    from: 'signups',
-                                                    localField: 'userId',
-                                                    foreignField: '_id',
-                                                    as: 'user'
-                                                }
-                                            }
-                                        ], function (err, post) {
-                                            if (err) {
-                                                return res.send({
-                                                    message: 'db err while aggregating',
-                                                    responseCode: 300,
-                                                    error: err
-                                                });
-                                            }
-                                            else {
-                                                return res.send({
-                                                    message: 'Post created 1',
-                                                    responseCode: 200,
-                                                    status: 200,
-                                                    post: post
-                                                });
-                                            }
+                                        return res.send({
+                                            message: 'Post created 1',
+                                            responseCode: 200,
+                                            status: 200,
+                                            post: result
                                         });
                                     }
                                 });
@@ -90,31 +70,11 @@ var PostController = /** @class */ (function () {
                                         });
                                     }
                                     else {
-                                        Post.aggregate([
-                                            {
-                                                $lookup: {
-                                                    from: 'User',
-                                                    localField: 'userId',
-                                                    foreignField: '_id',
-                                                    as: 'user'
-                                                }
-                                            }
-                                        ], function (err, post) {
-                                            if (err) {
-                                                return res.send({
-                                                    message: 'db err while aggregating',
-                                                    responseCode: 300,
-                                                    error: err
-                                                });
-                                            }
-                                            else {
-                                                return res.send({
-                                                    message: 'Post created 2',
-                                                    responseCode: 200,
-                                                    status: 200,
-                                                    post: post
-                                                });
-                                            }
+                                        return res.send({
+                                            message: 'Post created 2',
+                                            responseCode: 200,
+                                            status: 200,
+                                            post: result
                                         });
                                     }
                                 });
@@ -176,30 +136,59 @@ var PostController = /** @class */ (function () {
             }
         };
         this.viewAllPost = function (req, res) {
-            Post.find({}, function (err, post) {
-                console.log(post[1].userId);
-                var n = post.length;
-                var a = parseInt(n);
-                var i = 0;
-                while (a > 0) {
-                    console.log(post[a].userId);
-                    a--;
-                }
-                if (err) {
-                    return res.send({
-                        message: 'db err',
-                        responseCode: 300,
-                        error: err
-                    });
-                }
-                else {
-                    return res.send({
-                        message: 'all posts of all users',
-                        responseCode: 200,
-                        posts: post
-                    });
-                }
-            });
+            var numOfItems = parseInt(req.query.numOfItems);
+            var pageNum = parseInt(req.query.pageNum);
+            if (pageNum > 0) {
+                Post.find({}, function (err, post) {
+                    if (err) {
+                        return res.send({
+                            message: 'db err',
+                            responseCode: 300,
+                            error: err
+                        });
+                    }
+                    else {
+                        Post.aggregate([
+                            {
+                                $lookup: {
+                                    from: 'signups',
+                                    localField: 'userId',
+                                    foreignField: '_id',
+                                    as: 'user'
+                                }
+                            },
+                            {
+                                $skip: numOfItems * (pageNum - 1)
+                            },
+                            {
+                                $limit: numOfItems
+                            }
+                        ], function (err, post) {
+                            if (err) {
+                                return res.send({
+                                    message: 'db err while aggregating',
+                                    responseCode: 300,
+                                    error: err
+                                });
+                            }
+                            else {
+                                return res.send({
+                                    message: 'Post created 1',
+                                    responseCode: 200,
+                                    status: 200,
+                                    post: post
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+            else {
+                return res.send({
+                    message: 'Page number should be greater than 0',
+                    responseCode: 100
+                });
+            }
         };
     }
     return PostController;
