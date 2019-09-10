@@ -186,6 +186,47 @@ class PostController {
 
     }
 
+    ViewPostById = function(req:any, res:any){
+        if(req.body.productId){
+            const productId = req.body.productId;
+            
+                    Post.aggregate([
+                        {
+                            $match: {
+                                _id: mongoose.Types.ObjectId(productId)
+                            }
+                        },
+                        {
+                            $lookup: {
+                                from: 'signups',
+                                localField: 'userId',
+                                foreignField: '_id',
+                                as: 'user'
+                            }
+                        }
+                    ],(err:any, product:any)=>{
+                        if(err){
+                            return res.send({
+                                message: 'db err while aggregating',
+                                responseCode: 300,
+                                error: err
+                            })
+                        }else{
+                            return res.send({
+                                message: 'product by id',
+                                responseCode: 200,
+                                product: product
+                            })
+                        }
+                    })
+        }else{
+            return res.send({
+                message: 'productId required',
+                responseCode: 100
+            })
+        }
+    }
+
 
 }
 

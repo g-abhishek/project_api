@@ -8,7 +8,16 @@ var multer = require('multer');
 // var MongoStore = require('connect-mongo')(session);
 const mongoose = require('mongoose');
 var cookieParser = require('cookie-parser');
-var mangoos = require('./config/mongoose.config');
+var mangooseConnection = require('./config/mongoose.config');
+
+// let dev_db_url = 'mongodb+srv://Abhishek:Abhishek@abhishek-cluster-jxsrb.mongodb.net/final_year_project_db?retryWrites=true&w=majority';
+// mongoose.connect(dev_db_url,{ useNewUrlParser: true },(err:any,res:any)=>{
+//     if(err){
+//         console.log("dbb err");
+//     }else{
+//         console.log("Connected To Database");
+//     }
+// })
 
 // const swagger = require('./routes/swagger')
 
@@ -17,6 +26,8 @@ var app = express();
 
 
 app.use(express.static('public'));
+
+// extended=false is a configuration option that tells the parser to use the classic encoding.
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));

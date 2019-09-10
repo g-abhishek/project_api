@@ -163,7 +163,7 @@ var PostController = /** @class */ (function () {
                             {
                                 $limit: numOfItems
                             }
-                        ], function (err, post) {
+                        ], function (err, posts) {
                             if (err) {
                                 return res.send({
                                     message: 'db err while aggregating',
@@ -173,10 +173,10 @@ var PostController = /** @class */ (function () {
                             }
                             else {
                                 return res.send({
-                                    message: 'Post created 1',
+                                    message: 'all user posts',
                                     responseCode: 200,
                                     status: 200,
-                                    post: post
+                                    post: posts
                                 });
                             }
                         });
@@ -186,6 +186,47 @@ var PostController = /** @class */ (function () {
             else {
                 return res.send({
                     message: 'Page number should be greater than 0',
+                    responseCode: 100
+                });
+            }
+        };
+        this.ViewPostById = function (req, res) {
+            if (req.body.productId) {
+                var productId = req.body.productId;
+                Post.aggregate([
+                    {
+                        $match: {
+                            _id: mongoose.Types.ObjectId(productId)
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: 'signups',
+                            localField: 'userId',
+                            foreignField: '_id',
+                            as: 'user'
+                        }
+                    }
+                ], function (err, product) {
+                    if (err) {
+                        return res.send({
+                            message: 'db err while aggregating',
+                            responseCode: 300,
+                            error: err
+                        });
+                    }
+                    else {
+                        return res.send({
+                            message: 'product by id',
+                            responseCode: 200,
+                            product: product
+                        });
+                    }
+                });
+            }
+            else {
+                return res.send({
+                    message: 'productId required',
                     responseCode: 100
                 });
             }

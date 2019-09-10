@@ -13,10 +13,14 @@ var PostRoute = /** @class */ (function () {
     PostRoute.prototype.viewAllPost = function (app) {
         app.get('/viewallpost', post_controller_1.postController.viewAllPost);
     };
+    PostRoute.prototype.viewPostById = function (app) {
+        app.get('/viewPostById', post_controller_1.postController.ViewPostById);
+    };
     PostRoute.prototype.postRoute = function (app) {
         this.createPost(app);
         this.viewPost(app);
         this.viewAllPost(app);
+        this.viewPostById(app);
     };
     return PostRoute;
 }());
