@@ -12,10 +12,14 @@ export default class PostRoute{
     viewAllPost(app: Express){
         app.get('/viewallpost', postController.viewAllPost);
     }
+    viewPostById(app: Express){
+        app.post('/viewpostbyid', postController.ViewPostById);
+    }
 
     postRoute(app:Express){
         this.createPost(app);
         this.viewPost(app);
         this.viewAllPost(app);
+        this.viewPostById(app);
     }
 }

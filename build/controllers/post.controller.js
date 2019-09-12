@@ -136,56 +136,96 @@ var PostController = /** @class */ (function () {
             }
         };
         this.viewAllPost = function (req, res) {
-            var numOfItems = parseInt(req.query.numOfItems);
-            var pageNum = parseInt(req.query.pageNum);
-            if (pageNum > 0) {
-                Post.find({}, function (err, post) {
+            // const numOfItems = parseInt(req.query.numOfItems);
+            // const pageNum = parseInt(req.query.pageNum);
+            // if (pageNum > 0) {
+            Post.find({}, function (err, post) {
+                if (err) {
+                    return res.send({
+                        message: 'db err',
+                        responseCode: 300,
+                        error: err
+                    });
+                }
+                else {
+                    Post.aggregate([
+                        {
+                            $lookup: {
+                                from: 'signups',
+                                localField: 'userId',
+                                foreignField: '_id',
+                                as: 'user'
+                            }
+                        }
+                        // {
+                        //     $skip: numOfItems * (pageNum - 1)
+                        // },
+                        // {
+                        //     $limit: numOfItems
+                        // }
+                    ], function (err, posts) {
+                        if (err) {
+                            return res.send({
+                                message: 'db err while aggregating',
+                                responseCode: 300,
+                                error: err
+                            });
+                        }
+                        else {
+                            return res.send({
+                                message: 'all user posts',
+                                responseCode: 200,
+                                status: 200,
+                                post: posts
+                            });
+                        }
+                    });
+                }
+            });
+            // } else {
+            //     return res.send({
+            //         message: 'Page number should be greater than 0',
+            //         responseCode: 100
+            //     })
+            // }
+        };
+        this.ViewPostById = function (req, res) {
+            var productId = req.body.productId;
+            if (productId) {
+                Post.aggregate([
+                    {
+                        $match: {
+                            _id: mongoose.Types.ObjectId(productId)
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: 'signups',
+                            localField: 'userId',
+                            foreignField: '_id',
+                            as: 'user'
+                        }
+                    }
+                ], function (err, product) {
                     if (err) {
                         return res.send({
-                            message: 'db err',
+                            message: 'db err while aggregating',
                             responseCode: 300,
                             error: err
                         });
                     }
                     else {
-                        Post.aggregate([
-                            {
-                                $lookup: {
-                                    from: 'signups',
-                                    localField: 'userId',
-                                    foreignField: '_id',
-                                    as: 'user'
-                                }
-                            },
-                            {
-                                $skip: numOfItems * (pageNum - 1)
-                            },
-                            {
-                                $limit: numOfItems
-                            }
-                        ], function (err, post) {
-                            if (err) {
-                                return res.send({
-                                    message: 'db err while aggregating',
-                                    responseCode: 300,
-                                    error: err
-                                });
-                            }
-                            else {
-                                return res.send({
-                                    message: 'Post created 1',
-                                    responseCode: 200,
-                                    status: 200,
-                                    post: post
-                                });
-                            }
+                        return res.send({
+                            message: 'product by id',
+                            responseCode: 200,
+                            product: product
                         });
                     }
                 });
             }
             else {
                 return res.send({
-                    message: 'Page number should be greater than 0',
+                    message: 'productId required',
                     responseCode: 100
                 });
             }

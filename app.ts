@@ -53,9 +53,9 @@ app.post('/', upload.single('image'), (req:any, res:any) => {
 });
 
 
-app.listen(port, () => {
-    console.log('Server is up and running on port numner ' + port);
-});
-// app.listen(3002, '192.168.1.106',()=>{
-//     console.log('Server is up and running on port numner ' + 3002);
+// app.listen(port, () => {
+//     console.log('Server is up and running on port numner ' + port);
 // });
+app.listen(3002, '192.168.1.106',()=>{
+    console.log('Server is up and running on port numner ' + 3002);
+});

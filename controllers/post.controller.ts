@@ -34,7 +34,6 @@ class PostController {
                                         error: err
                                     })
                                 } else {
-
                                     return res.send({
                                         message: 'Post created 1',
                                         responseCode: 200,
@@ -131,9 +130,9 @@ class PostController {
     }
 
     viewAllPost = function (req: any, res: any) {
-        const numOfItems = parseInt(req.query.numOfItems);
-        const pageNum = parseInt(req.query.pageNum);
-        if (pageNum > 0) {
+        // const numOfItems = parseInt(req.query.numOfItems);
+        // const pageNum = parseInt(req.query.pageNum);
+        // if (pageNum > 0) {
             Post.find({}, (err: any, post: any) => {
                 if (err) {
                     return res.send({
@@ -150,13 +149,13 @@ class PostController {
                                 foreignField: '_id',
                                 as: 'user'
                             }
-                        },
-                        {
-                            $skip: numOfItems * (pageNum - 1)
-                        },
-                        {
-                            $limit: numOfItems
                         }
+                        // {
+                        //     $skip: numOfItems * (pageNum - 1)
+                        // },
+                        // {
+                        //     $limit: numOfItems
+                        // }
                     ], (err: any, posts: any) => {
                         if (err) {
                             return res.send({
@@ -177,13 +176,54 @@ class PostController {
 
                 }
             })
-        } else {
+        // } else {
+        //     return res.send({
+        //         message: 'Page number should be greater than 0',
+        //         responseCode: 100
+        //     })
+        // }
+
+    }
+
+    ViewPostById = function(req:any, res:any){
+        var productId = req.body.productId;
+        if(productId){           
+            
+                    Post.aggregate([
+                        {
+                            $match: {
+                                _id: mongoose.Types.ObjectId(productId)
+                            }
+                        },
+                        {
+                            $lookup: {
+                                from: 'signups',
+                                localField: 'userId',
+                                foreignField: '_id',
+                                as: 'user'
+                            }
+                        }
+                    ],(err:any, product:any)=>{
+                        if(err){
+                            return res.send({
+                                message: 'db err while aggregating',
+                                responseCode: 300,
+                                error: err
+                            })
+                        }else{
+                            return res.send({
+                                message: 'product by id',
+                                responseCode: 200,
+                                product: product
+                            })
+                        }
+                    })
+        }else{
             return res.send({
-                message: 'Page number should be greater than 0',
+                message: 'productId required',
                 responseCode: 100
             })
         }
-
     }
 
 
