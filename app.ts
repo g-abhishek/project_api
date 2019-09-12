@@ -4,8 +4,6 @@ import PostRoute from './routes/post.route';
 
 var bodyParser = require('body-parser');
 var multer = require('multer');
-// var session = require('express-session');
-// var MongoStore = require('connect-mongo')(session);
 const mongoose = require('mongoose');
 var cookieParser = require('cookie-parser');
 var mangoos = require('./config/mongoose.config');
@@ -52,10 +50,9 @@ app.post('/', upload.single('image'), (req:any, res:any) => {
         }
 });
 
-
-// app.listen(port, () => {
-//     console.log('Server is up and running on port numner ' + port);
-// });
-app.listen(3002, '192.168.1.106',()=>{
-    console.log('Server is up and running on port numner ' + 3002);
+app.listen(port, () => {
+    console.log('Server is up and running on port numner ' + port);
 });
+// app.listen(3002, '192.168.1.106',()=>{
+//     console.log('Server is up and running on port numner ' + 3002);
+// });

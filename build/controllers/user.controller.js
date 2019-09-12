@@ -2,9 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var User = require('../models/user.model');
 var jwt = require('jsonwebtoken');
-var no_user_found = 500;
-var db_err = 400;
-var not_valid_token = 900;
 var UserController = /** @class */ (function () {
     function UserController() {
         this.signUp = function (req, res, next) {
@@ -42,6 +39,7 @@ var UserController = /** @class */ (function () {
                 });
             }
         };
+        //login
         this.getSignedUser = function (req, res, next) {
             if (req.body.mobile && req.body.password) {
                 var signUpData = {
@@ -97,7 +95,6 @@ var UserController = /** @class */ (function () {
             }
         };
         this.user = function (req, res, next) {
-            var isRegistrationVarified = false;
             var token = req.headers.token;
             if (token) {
                 jwt.verify(token, 'my_secret_key', function (err, user) {

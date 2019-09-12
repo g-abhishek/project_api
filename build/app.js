@@ -8,8 +8,6 @@ var user_route_1 = __importDefault(require("./routes/user.route"));
 var post_route_1 = __importDefault(require("./routes/post.route"));
 var bodyParser = require('body-parser');
 var multer = require('multer');
-// var session = require('express-session');
-// var MongoStore = require('connect-mongo')(session);
 var mongoose = require('mongoose');
 var cookieParser = require('cookie-parser');
 var mangoos = require('./config/mongoose.config');
@@ -47,10 +45,10 @@ app.post('/', upload.single('image'), function (req, res) {
         });
     }
 });
-// app.listen(port, () => {
-//     console.log('Server is up and running on port numner ' + port);
-// });
-app.listen(3002, '192.168.1.106', function () {
-    console.log('Server is up and running on port numner ' + 3002);
+app.listen(port, function () {
+    console.log('Server is up and running on port numner ' + port);
 });
+// app.listen(3002, '192.168.1.106',()=>{
+//     console.log('Server is up and running on port numner ' + 3002);
+// });
 //# sourceMappingURL=app.js.map

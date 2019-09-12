@@ -1,12 +1,6 @@
 const User = require('../models/user.model');
 var jwt = require('jsonwebtoken');
 
-var no_user_found = 500;
-var db_err = 400;
-var not_valid_token = 900;
-
-
-
 export default class UserController {
 
     signUp = function (req: any, res: any, next: any) {
@@ -42,6 +36,8 @@ export default class UserController {
             });
         }
     }
+
+    //login
     getSignedUser = function (req: any, res: any, next: any) {
         if (req.body.mobile && req.body.password) {
             var signUpData = {
@@ -95,7 +91,6 @@ export default class UserController {
     }
 
     user = function (req: any, res: any, next: any) {
-        var isRegistrationVarified = false;
         var token = req.headers.token;
         if (token) {
             jwt.verify(token, 'my_secret_key', (err: any, user: any) => {
