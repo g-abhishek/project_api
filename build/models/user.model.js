@@ -24,6 +24,10 @@ var signUpSchema = new mongoose.Schema({
     isRegistrationVarified: {
         type: Boolean,
         default: false
+    },
+    profilePic: {
+        type: String,
+        default: 'https://unknown-ag.github.io/sheetal_academy/ProjectImages/abhishek.jpeg'
     }
 });
 var Signup = mongoose.model('Signup', signUpSchema);

@@ -24,31 +24,25 @@ var postRoute = new post_route_1.default();
 postRoute.postRoute(app);
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'D:/');
+        cb(null, 'uploads/');
     },
     filename: function (req, file, cb) {
-        cb(null, Date.now() + '-' + file.originalname);
+        cb(null, file.fieldname + '-' + Date.now());
     }
 });
 var upload = multer({ storage: storage });
-app.post('/', upload.single('image'), function (req, res) {
-    if (!req.file) {
-        return res.send({
-            message: "Please Select an Image",
-            responseCode: 200
-        });
+app.post('/', upload.single('file'), function (req, res) {
+    var file = req.file;
+    if (!file) {
+        var error = new Error('Please upload a file');
+        return res.send(error);
     }
-    else {
-        return res.send({
-            message: "uploaded an Image",
-            responseCode: 200
-        });
-    }
+    res.send(file);
 });
-app.listen(port, function () {
-    console.log('Server is up and running on port numner ' + port);
-});
-// app.listen(3002, '192.168.1.106',()=>{
-//     console.log('Server is up and running on port numner ' + 3002);
+// app.listen(port, () => {
+//     console.log('Server is up and running on port numner ' + port);
 // });
+app.listen(3002, '192.168.1.106', function () {
+    console.log('Server is up and running on port numner ' + 3002);
+});
 //# sourceMappingURL=app.js.map
