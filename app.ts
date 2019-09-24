@@ -7,6 +7,8 @@ var multer = require('multer');
 const mongoose = require('mongoose');
 var cookieParser = require('cookie-parser');
 var mangoos = require('./config/mongoose.config');
+var os = require('os');
+
 
 // const swagger = require('./routes/swagger')
 
@@ -16,8 +18,8 @@ var app = express();
 
 app.use(express.static('public'));
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.use(cookieParser());
 var userRouting = new UserRoute();
 userRouting.userRoute(app);
@@ -47,6 +49,8 @@ app.post('/',upload.single('file'),(req:any, res:any)=>{
 // app.listen(port, () => {
 //     console.log('Server is up and running on port numner ' + port);
 // });
-app.listen(3002, '192.168.1.106',()=>{
+
+console.log(os.hostname());
+app.listen(3002, '192.168.1.107',()=>{
     console.log('Server is up and running on port numner ' + 3002);
 });

@@ -2,12 +2,15 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var mongoose = require('mongoose');
 var Post = require('../models/post.model');
-var User = require('../models/user.model');
 var jwt = require('jsonwebtoken');
+var base64ToImage = require('base64-to-image');
 var PostController = /** @class */ (function () {
     function PostController() {
         this.createPost = function (req, res) {
             var token = req.headers.token;
+            var Var1 = req.body.file;
+            var data = 'data:image/jpeg;base64,';
+            data += Var1;
             if (token) {
                 jwt.verify(token, 'my_secret_key', function (err, user) {
                     if (err) {
@@ -18,6 +21,13 @@ var PostController = /** @class */ (function () {
                         });
                     }
                     else {
+                        // base64str to image
+                        var optionalObj = { 'fileName': new Date().getTime() + '-postImage', 'type': 'png' };
+                        var imageInfo = base64ToImage(data, 'public/postImage/', optionalObj);
+                        var pathname = "http://192.168.1.107:3002" + "/postImage/" + imageInfo.fileName;
+                        console.log(imageInfo);
+                        console.log(pathname);
+                        //--------base64str to image end --------
                         var userId = user._id;
                         if (req.body.paymentType === 'Paid') {
                             if (req.body.nameOfProduct && req.body.description && req.body.price) {
@@ -26,7 +36,8 @@ var PostController = /** @class */ (function () {
                                     nameOfProduct: req.body.nameOfProduct,
                                     description: req.body.description,
                                     paymentType: req.body.paymentType,
-                                    price: req.body.price
+                                    price: req.body.price,
+                                    postImage: pathname
                                 };
                                 Post.create(postSchema, function (err, result) {
                                     if (err) {
@@ -59,7 +70,8 @@ var PostController = /** @class */ (function () {
                                     userId: userId,
                                     nameOfProduct: req.body.nameOfProduct,
                                     description: req.body.description,
-                                    paymentType: req.body.paymentType
+                                    paymentType: req.body.paymentType,
+                                    postImage: pathname
                                 };
                                 Post.create(postSchema2, function (err, result) {
                                     if (err) {
@@ -156,6 +168,9 @@ var PostController = /** @class */ (function () {
                                 foreignField: '_id',
                                 as: 'user'
                             }
+                        },
+                        {
+                            $sort: { postCreationDate: -1 }
                         }
                         // {
                         //     $skip: numOfItems * (pageNum - 1)

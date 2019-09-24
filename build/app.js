@@ -11,12 +11,13 @@ var multer = require('multer');
 var mongoose = require('mongoose');
 var cookieParser = require('cookie-parser');
 var mangoos = require('./config/mongoose.config');
+var os = require('os');
 // const swagger = require('./routes/swagger')
 var port = process.env.PORT || 3004;
 var app = express_1.default();
 app.use(express_1.default.static('public'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(cookieParser());
 var userRouting = new user_route_1.default();
 userRouting.userRoute(app);
@@ -42,7 +43,8 @@ app.post('/', upload.single('file'), function (req, res) {
 // app.listen(port, () => {
 //     console.log('Server is up and running on port numner ' + port);
 // });
-app.listen(3002, '192.168.1.106', function () {
+console.log(os.hostname());
+app.listen(3002, '192.168.1.107', function () {
     console.log('Server is up and running on port numner ' + 3002);
 });
 //# sourceMappingURL=app.js.map

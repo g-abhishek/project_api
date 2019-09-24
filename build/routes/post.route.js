@@ -16,11 +16,15 @@ var PostRoute = /** @class */ (function () {
     PostRoute.prototype.viewPostById = function (app) {
         app.post('/viewpostbyid', post_controller_1.postController.ViewPostById);
     };
+    // postImageUpload(app: Express){
+    //     app.post('/postupload', postController.postImageUpload);
+    // }
     PostRoute.prototype.postRoute = function (app) {
         this.createPost(app);
         this.viewPost(app);
         this.viewAllPost(app);
         this.viewPostById(app);
+        // this.postImageUpload(app);
     };
     return PostRoute;
 }());

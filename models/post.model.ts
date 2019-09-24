@@ -27,6 +27,10 @@ let postSchema = new mongoose.Schema({
     postCreationDate: {
         type: Date,
         default: Date
+    },
+    postImage: {
+        type: String,
+        default: 'https://unknown-ag.github.io/sheetal_academy/ProjectImages/abhishek.jpeg'
     }
 })
 

@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var User = require('../models/user.model');
 var jwt = require('jsonwebtoken');
+var base64ToImage = require('base64-to-image');
 var UserController = /** @class */ (function () {
     function UserController() {
         this.signUp = function (req, res, next) {
@@ -274,6 +275,60 @@ var UserController = /** @class */ (function () {
                     message: 'token required',
                     responseCode: 900,
                     status: 200
+                });
+            }
+        };
+        this.profilePic = function (req, res) {
+            var token = req.headers.token;
+            var Var1 = req.body.file;
+            var data = 'data:image/jpeg;base64,';
+            data += Var1;
+            if (token) {
+                jwt.verify(token, 'my_secret_key', function (err, user) {
+                    if (err) {
+                        return res.send({
+                            message: 'unauthorized access',
+                            responseCode: 700,
+                            error: err
+                        });
+                    }
+                    else {
+                        // base64str to image
+                        var optionalObj = { 'fileName': new Date().getTime() + '-postImage', 'type': 'jpg' };
+                        var imageInfo = base64ToImage(data, 'public/profilePic/', optionalObj);
+                        var pathname = "http://192.168.1.107:3002" + "/profilePic/" + imageInfo.fileName;
+                        console.log(imageInfo);
+                        console.log(pathname);
+                        //--------base64str to image end --------
+                        var userId = user._id;
+                        User.findOneAndUpdate({ '_id': userId }, { $set: { 'profilePic': pathname } }, { new: true, useFindAndModify: false }, function (err, result) {
+                            var token = jwt.sign(JSON.stringify(result), 'my_secret_key');
+                            if (err) {
+                                return res.send({
+                                    message: 'error',
+                                    responseCode: 500,
+                                    error: err
+                                });
+                            }
+                            else {
+                                if (!result) {
+                                    return res.send({
+                                        message: 'no user found',
+                                        responseCode: 700,
+                                        result: result
+                                    });
+                                }
+                                else {
+                                    return res.send({
+                                        message: 'profile pic updated',
+                                        responseCode: 200,
+                                        token: token,
+                                        result: result
+                                    });
+                                }
+                            }
+                        });
+                    }
                 });
             }
         };

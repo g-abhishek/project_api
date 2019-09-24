@@ -24,15 +24,8 @@ export default class UserRoute {
         app.post('/edituser', userController.editUser);
     }
 
-    uplaod(app: Express) {
-        app.post('/upload', upload.single('file'), (req: any, res: any) => {
-            const file = req.file
-            if (!file) {
-                const error = new Error('Please upload a file')
-                return res.send(error)
-            }
-            res.send(file)
-        })
+    profilePic(app: Express) {
+        app.post('/profilePic', userController.profilePic);
     }
 
     userRoute(app: Express) {
@@ -41,7 +34,7 @@ export default class UserRoute {
         this.getSignedUser(app);
         this.user(app);
         this.editUser(app);
-        this.uplaod(app);
+        this.profilePic(app);
     }
 
 }

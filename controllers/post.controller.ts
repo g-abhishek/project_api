@@ -1,12 +1,15 @@
 var mongoose = require('mongoose');
 var Post = require('../models/post.model');
-var User = require('../models/user.model');
 var jwt = require('jsonwebtoken');
+var base64ToImage = require('base64-to-image');
 
 class PostController {
 
     createPost = function (req: any, res: any) {
         var token = req.headers.token;
+        var Var1 = req.body.file;
+        var data = 'data:image/jpeg;base64,';
+        data += Var1;
         if (token) {
             jwt.verify(token, 'my_secret_key', (err: any, user: any) => {
                 if (err) {
@@ -16,6 +19,14 @@ class PostController {
                         error: err
                     })
                 } else {
+                    // base64str to image
+                    var optionalObj = { 'fileName': new Date().getTime() + '-postImage', 'type': 'png' };
+                    var imageInfo = base64ToImage(data, 'public/postImage/', optionalObj);
+                    var pathname = "http://192.168.1.107:3002" + "/postImage/" + imageInfo.fileName;
+                    console.log(imageInfo);
+                    console.log(pathname);
+                    //--------base64str to image end --------
+
                     var userId = user._id;
                     if (req.body.paymentType === 'Paid') {
                         if (req.body.nameOfProduct && req.body.description && req.body.price) {
@@ -24,7 +35,8 @@ class PostController {
                                 nameOfProduct: req.body.nameOfProduct,
                                 description: req.body.description,
                                 paymentType: req.body.paymentType,
-                                price: req.body.price
+                                price: req.body.price,
+                                postImage: pathname
                             }
                             Post.create(postSchema, (err: any, result: any) => {
                                 if (err) {
@@ -49,12 +61,14 @@ class PostController {
                             })
                         }
                     } else {
+
                         if (req.body.nameOfProduct && req.body.description && req.body.paymentType) {
                             var postSchema2 = {
                                 userId: userId,
                                 nameOfProduct: req.body.nameOfProduct,
                                 description: req.body.description,
-                                paymentType: req.body.paymentType
+                                paymentType: req.body.paymentType,
+                                postImage: pathname
                             }
                             Post.create(postSchema2, (err: any, result: any) => {
                                 if (err) {
@@ -133,49 +147,52 @@ class PostController {
         // const numOfItems = parseInt(req.query.numOfItems);
         // const pageNum = parseInt(req.query.pageNum);
         // if (pageNum > 0) {
-            Post.find({}, (err: any, post: any) => {
-                if (err) {
-                    return res.send({
-                        message: 'db err',
-                        responseCode: 300,
-                        error: err
-                    })
-                } else {
-                    Post.aggregate([
-                        {
-                            $lookup: {
-                                from: 'signups',
-                                localField: 'userId',
-                                foreignField: '_id',
-                                as: 'user'
-                            }
+        Post.find({}, (err: any, post: any) => {
+            if (err) {
+                return res.send({
+                    message: 'db err',
+                    responseCode: 300,
+                    error: err
+                })
+            } else {
+                Post.aggregate([
+                    {
+                        $lookup: {
+                            from: 'signups',
+                            localField: 'userId',
+                            foreignField: '_id',
+                            as: 'user'
                         }
-                        // {
-                        //     $skip: numOfItems * (pageNum - 1)
-                        // },
-                        // {
-                        //     $limit: numOfItems
-                        // }
-                    ], (err: any, posts: any) => {
-                        if (err) {
-                            return res.send({
-                                message: 'db err while aggregating',
-                                responseCode: 300,
-                                error: err
-                            })
-                        } else {
+                    },
+                    {
+                        $sort: {postCreationDate:-1}
+                    }
+                    // {
+                    //     $skip: numOfItems * (pageNum - 1)
+                    // },
+                    // {
+                    //     $limit: numOfItems
+                    // }
+                ], (err: any, posts: any) => {
+                    if (err) {
+                        return res.send({
+                            message: 'db err while aggregating',
+                            responseCode: 300,
+                            error: err
+                        })
+                    } else {
 
-                            return res.send({
-                                message: 'all user posts',
-                                responseCode: 200,
-                                status: 200,
-                                post: posts
-                            });
-                        }
-                    })
+                        return res.send({
+                            message: 'all user posts',
+                            responseCode: 200,
+                            status: 200,
+                            post: posts
+                        });
+                    }
+                })
 
-                }
-            })
+            }
+        })
         // } else {
         //     return res.send({
         //         message: 'Page number should be greater than 0',
@@ -185,40 +202,40 @@ class PostController {
 
     }
 
-    ViewPostById = function(req:any, res:any){
+    ViewPostById = function (req: any, res: any) {
         var productId = req.body.productId;
-        if(productId){           
-            
-                    Post.aggregate([
-                        {
-                            $match: {
-                                _id: mongoose.Types.ObjectId(productId)
-                            }
-                        },
-                        {
-                            $lookup: {
-                                from: 'signups',
-                                localField: 'userId',
-                                foreignField: '_id',
-                                as: 'user'
-                            }
-                        }
-                    ],(err:any, product:any)=>{
-                        if(err){
-                            return res.send({
-                                message: 'db err while aggregating',
-                                responseCode: 300,
-                                error: err
-                            })
-                        }else{
-                            return res.send({
-                                message: 'product by id',
-                                responseCode: 200,
-                                product: product
-                            })
-                        }
+        if (productId) {
+
+            Post.aggregate([
+                {
+                    $match: {
+                        _id: mongoose.Types.ObjectId(productId)
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'signups',
+                        localField: 'userId',
+                        foreignField: '_id',
+                        as: 'user'
+                    }
+                }
+            ], (err: any, product: any) => {
+                if (err) {
+                    return res.send({
+                        message: 'db err while aggregating',
+                        responseCode: 300,
+                        error: err
                     })
-        }else{
+                } else {
+                    return res.send({
+                        message: 'product by id',
+                        responseCode: 200,
+                        product: product
+                    })
+                }
+            })
+        } else {
             return res.send({
                 message: 'productId required',
                 responseCode: 100
@@ -226,7 +243,9 @@ class PostController {
         }
     }
 
-
 }
+
+
+
 
 export const postController = new PostController();

@@ -15,11 +15,15 @@ export default class PostRoute{
     viewPostById(app: Express){
         app.post('/viewpostbyid', postController.ViewPostById);
     }
+    // postImageUpload(app: Express){
+    //     app.post('/postupload', postController.postImageUpload);
+    // }
 
     postRoute(app:Express){
         this.createPost(app);
         this.viewPost(app);
         this.viewAllPost(app);
         this.viewPostById(app);
+        // this.postImageUpload(app);
     }
 }
