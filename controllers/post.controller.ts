@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var Post = require('../models/post.model');
 var jwt = require('jsonwebtoken');
 var base64ToImage = require('base64-to-image');
+var cloudinary = require('cloudinary').v2;
 
 class PostController {
 
@@ -20,11 +21,16 @@ class PostController {
                     })
                 } else {
                     // base64str to image
-                    var optionalObj = { 'fileName': new Date().getTime() + '-postImage', 'type': 'png' };
-                    var imageInfo = base64ToImage(data, 'public/postImage/', optionalObj);
-                    var pathname = "http://192.168.1.107:3002" + "/postImage/" + imageInfo.fileName;
-                    console.log(imageInfo);
-                    console.log(pathname);
+                    var imgUrl = "https://unknown-ag.github.io/sheetal_academy/ProjectImages/abhishek.jpeg";
+                    cloudinary.uploader.upload(data, function(error:any, result:any) {
+                             imgUrl = result.url;
+                   
+
+                    // var optionalObj = { 'fileName': new Date().getTime() + '-postImage', 'type': 'png' };
+                    // var imageInfo = base64ToImage(data, 'public/postImage/', optionalObj);
+                    // var pathname = "http://192.168.1.107:3002" + "/postImage/" + imageInfo.fileName;
+                    // console.log(imageInfo);
+                    // console.log(pathname);
                     //--------base64str to image end --------
 
                     var userId = user._id;
@@ -36,7 +42,7 @@ class PostController {
                                 description: req.body.description,
                                 paymentType: req.body.paymentType,
                                 price: req.body.price,
-                                postImage: pathname
+                                postImage: imgUrl
                             }
                             Post.create(postSchema, (err: any, result: any) => {
                                 if (err) {
@@ -68,7 +74,7 @@ class PostController {
                                 nameOfProduct: req.body.nameOfProduct,
                                 description: req.body.description,
                                 paymentType: req.body.paymentType,
-                                postImage: pathname
+                                postImage: imgUrl
                             }
                             Post.create(postSchema2, (err: any, result: any) => {
                                 if (err) {
@@ -95,6 +101,7 @@ class PostController {
                             })
                         }
                     }
+                });
 
                 }
             })

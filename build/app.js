@@ -12,6 +12,7 @@ var mongoose = require('mongoose');
 var cookieParser = require('cookie-parser');
 var mangoos = require('./config/mongoose.config');
 var os = require('os');
+var cloudinary = require('cloudinary').v2;
 // const swagger = require('./routes/swagger')
 var port = process.env.PORT || 3004;
 var app = express_1.default();
@@ -40,11 +41,16 @@ app.post('/', upload.single('file'), function (req, res) {
     }
     res.send(file);
 });
-// app.listen(port, () => {
-//     console.log('Server is up and running on port numner ' + port);
-// });
-console.log(os.hostname());
-app.listen(3002, '192.168.1.107', function () {
-    console.log('Server is up and running on port numner ' + 3002);
+cloudinary.config({
+    cloud_name: 'sellofy',
+    api_key: '317921634687358',
+    api_secret: 'EGUDQiV9SJ4XBcFKhehu5UmHloY'
 });
+console.log(os.hostname());
+app.listen(port, function () {
+    console.log('Server is up and running on port numner ' + port);
+});
+// app.listen(3002, '192.168.1.107',()=>{
+//     console.log('Server is up and running on port numner ' + 3002);
+// });
 //# sourceMappingURL=app.js.map
